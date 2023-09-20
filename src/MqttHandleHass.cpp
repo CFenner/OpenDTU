@@ -91,14 +91,14 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* icon, c
     String id = name;
     id.toLowerCase();
     id.replace(" ", "_");
-    if (strcmp(subTopic, "")) {
-        subTopic = id;
-    }
-    String configTopic = "sensor/" + NetworkSettings.getHostname() + "/" + id + "/config";
 
     DynamicJsonDocument root(1024);
     root["name"] = name;
-    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + subTopic;
+    if (strcmp(subTopic, "")) {
+        root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + id;
+    } else {
+        root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + subTopic;
+    }
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + id;
     root["ic"] = icon;
     root["ent_cat"] = category;
@@ -108,6 +108,7 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* icon, c
     createDTUDeviceInfo(deviceObj);
 
     String buffer;
+    String configTopic = "sensor/" + NetworkSettings.getHostname() + "/" + id + "/config";
     serializeJson(root, buffer);
     publish(configTopic, buffer);
 }
