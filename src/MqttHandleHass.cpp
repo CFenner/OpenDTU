@@ -103,11 +103,11 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* device_
     if (strcmp(device_class, "")) {
         root["dev_cla"] = device_class;
     }
-    if (strcmp(icon, "")) {
-        root["ic"] = icon;
-    }
     if (strcmp(category, "")) {
         root["ent_cat"] = category;
+    }
+    if (strcmp(icon, "")) {
+        root["ic"] = icon;
     }
     if (strcmp(unit_of_measure, "")) {
         root["unit_of_meas"] = unit_of_measure;
@@ -123,7 +123,7 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* device_
     publish(configTopic, buffer);
 }
 
-void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* device_class)
+void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* device_class, const char* category)
 {
     String sensorId = name;
     sensorId.toLowerCase();
@@ -135,6 +135,9 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + sensorId;
     if (strcmp(device_class, "")) {
         root["dev_cla"] = device_class;
+    }
+    if (strcmp(category, "")) {
+        root["ent_cat"] = category;
     }
     root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     
