@@ -49,13 +49,13 @@ void MqttHandleHassClass::publishConfig()
 
     // publish DTU
 
-    String configTopic = "sensor/dtu_" + serial + "/" + "ip" + "/config";
+    String configTopic = "sensor/" + NetworkSettings.getHostname() + "/" + "ip" + "/config";
     String stateTopic = MqttSettings.getPrefix() + "dtu" + "/" + "ip";
 
     DynamicJsonDocument root(1024);
     root["name"] = "IP";
     root["stat_t"] = stateTopic;
-    root["uniq_id"] = serial + "_ip";
+    root["uniq_id"] = NetworkSettings.getHostname() + "_ip";
 
     JsonObject deviceObj = root.createNestedObject("dev");
     createDTUDeviceInfo(deviceObj)
@@ -64,7 +64,7 @@ void MqttHandleHassClass::publishConfig()
     serializeJson(root, buffer);
     publish(configTopic, buffer);
     
-    // finish
+    // finish publish DTU
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
