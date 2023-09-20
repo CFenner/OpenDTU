@@ -99,11 +99,12 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* device_
 
     DynamicJsonDocument root(1024);
     root["name"] = name;
-    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + id;
-    root["ic"] = icon;
-    root["ent_cat"] = category;
-    root["unit_of_meas"] = unit_of_measure;
+    root["dev_cla"] = device_class;
+    //root["ic"] = icon;
+    //root["ent_cat"] = category;
+    //root["unit_of_meas"] = unit_of_measure;
+    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     
     JsonObject deviceObj = root.createNestedObject("dev");
     createDTUDeviceInfo(deviceObj);
