@@ -48,10 +48,10 @@ void MqttHandleHassClass::publishConfig()
     const CONFIG_T& config = Configuration.get();
 
     // publish DTU sensors
-    publishDTUSensor("IP", "", "diagnostic", "mdi:network-outline", "", "");//"diagnostic", "mdi:network-outline", "", "");
-    publishDTUSensor("WiFi Signal", "signal_strength", "diagnostic", "", "dBm", "rssi");//"diagnostic", "", "dBm", "rssi");
-    publishDTUSensor("Uptime", "duration", "diagnostic", "", "s", "");//"diagnostic", "mdi:clock-time-eight-outline", "s", "");
-    publishDTUBinarySensor("Status", "connectivity", "diagnostic");
+    publishDTUSensor("IP", "", "diagnostic", "mdi:network-outline", "", "");
+    publishDTUSensor("WiFi Signal", "signal_strength", "diagnostic", "", "dBm", "rssi");
+    publishDTUSensor("Uptime", "duration", "diagnostic", "", "s", "");
+    publishDTUBinarySensor("Status", "connectivity", "diagnostic", "online", "offline");
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
@@ -123,7 +123,7 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* device_
     publish(configTopic, buffer);
 }
 
-void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* device_class, const char* category)
+void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* device_class, const char* category, const char* payload_on, const char* payload_off)
 {
     String sensorId = name;
     sensorId.toLowerCase();
@@ -140,7 +140,12 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
         root["ent_cat"] = category;
     }
     root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
-    root["availability_topic"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
+    if (strcmp(payload_on, "")) {
+        root["payload_on"] = payload_on;
+    }
+    if (strcmp(payload_off, "")) {
+        root["payload_off"] = payload_off;
+    }
     
     JsonObject deviceObj = root.createNestedObject("dev");
     createDTUDeviceInfo(deviceObj);
@@ -343,9 +348,8 @@ void MqttHandleHassClass::createInverterDeviceInfo(JsonObject& object, std::shar
     object["name"] = inv->name();
     object["ids"] = inv->serialString();
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
-    //object["mf"] = "";
-    object["mdl"] = inv->typeName(); //TODO: find out why inv->DevInfo()->getHwModelName() is not available yet
-    //TODO: same as aboveobject["sw"] = inv->DevInfo()->getFwBuildVersion();
+    object["mdl"] = inv->typeName(); //TODO(cfenner): find out why inv->DevInfo()->getHwModelName() is not available yet
+    //TODO(cfenner): same as aboveobject["sw"] = inv->DevInfo()->getFwBuildVersion();
     object["via_device"] = NetworkSettings.getHostname();
 }
 
