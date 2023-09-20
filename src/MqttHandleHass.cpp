@@ -47,24 +47,10 @@ void MqttHandleHassClass::publishConfig()
 
     const CONFIG_T& config = Configuration.get();
 
-    // publish DTU
-
-    String configTopic = "sensor/" + NetworkSettings.getHostname() + "/" + "ip" + "/config";
-    String stateTopic = MqttSettings.getPrefix() + "dtu" + "/" + "ip";
-
-    DynamicJsonDocument root(1024);
-    root["name"] = "IP";
-    root["stat_t"] = stateTopic;
-    root["uniq_id"] = NetworkSettings.getHostname() + "_ip";
-
-    JsonObject deviceObj = root.createNestedObject("dev");
-    createDTUDeviceInfo(deviceObj);
-
-    String buffer;
-    serializeJson(root, buffer);
-    publish(configTopic, buffer);
-    
-    // finish publish DTU
+    // publish DTU sensors
+    publishDTUSensor("IP", "mdi:network-outline", "diagnostics", "", "");
+    publishDTUSensor("WiFi Signal", "mdi:wifi", "diagnostics", "dBm", "rssi");
+    publishDTUSensor("Uptime", "mdi:clock-time-eight-outline", "diagnostics", "s", "");
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
@@ -98,6 +84,30 @@ void MqttHandleHassClass::publishConfig()
 
         yield();
     }
+}
+
+void MqttHandleHassClass::publishDTUSensor(const char* name, const char* icon, const char* category, const char* unit_of_measure, const char* subTopic)
+{
+    String id = name.toLowerCase().replace(" ", "_");
+    if (strcmp(subTopic, "")) {
+        subTopic = id;
+    }
+    String configTopic = "sensor/" + NetworkSettings.getHostname() + "/" + id + "/config";
+
+    DynamicJsonDocument root(1024);
+    root["name"] = name;
+    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + subTopic;
+    root["uniq_id"] = NetworkSettings.getHostname() + "_" + id;
+    root["ic"] = icon;
+    root["ent_cat"] = category;
+    root["unit_of_meas"] = unit_of_measure;
+    
+    JsonObject deviceObj = root.createNestedObject("dev");
+    createDTUDeviceInfo(deviceObj);
+
+    String buffer;
+    serializeJson(root, buffer);
+    publish(configTopic, buffer);
 }
 
 void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, ChannelType_t type, ChannelNum_t channel, byteAssign_fieldDeviceClass_t fieldType, bool clear)
