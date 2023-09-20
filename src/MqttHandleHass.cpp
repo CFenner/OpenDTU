@@ -150,7 +150,7 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         }
 
         JsonObject deviceObj = root.createNestedObject("dev");
-        createStringDeviceInfo(deviceObj, inv);
+        createStringDeviceInfo(deviceObj, inv, chanNum);
 
         if (Configuration.get().Mqtt_Hass_Expire) {
             root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
@@ -294,10 +294,10 @@ void MqttHandleHassClass::createInverterDeviceInfo(JsonObject& object, std::shar
     object["via_device"] = "dtu";
 }
 
-void MqttHandleHassClass::createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv)
+void MqttHandleHassClass::createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv, String channel)
 {
-    object["name"] = "CH" + chanNum; 
-    object["ids"] = inv->serialString() + "_ch" + chanNum;
+    object["name"] = "CH" + channel; 
+    object["ids"] = inv->serialString() + "_ch" + channel;
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
     object["via_device"] = inv->serialString();
 }
