@@ -88,7 +88,9 @@ void MqttHandleHassClass::publishConfig()
 
 void MqttHandleHassClass::publishDTUSensor(const char* name, const char* icon, const char* category, const char* unit_of_measure, const char* subTopic)
 {
-    String id = name.toLowerCase().replace(" ", "_");
+    String id = name;
+    id.toLowerCase();
+    id.replace(" ", "_");
     if (strcmp(subTopic, "")) {
         subTopic = id;
     }
