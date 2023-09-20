@@ -47,6 +47,25 @@ void MqttHandleHassClass::publishConfig()
 
     const CONFIG_T& config = Configuration.get();
 
+    // publish DTU
+
+    String configTopic = "sensor/dtu_" + serial + "/" + "ip" + "/config";
+    String stateTopic = MqttSettings.getPrefix() + "dtu" + "/" + "ip";
+
+    DynamicJsonDocument root(1024);
+    root["name"] = "IP";
+    root["stat_t"] = stateTopic;
+    root["uniq_id"] = serial + "_ip";
+
+    JsonObject deviceObj = root.createNestedObject("dev");
+    createDTUDeviceInfo(deviceObj)
+
+    String buffer;
+    serializeJson(root, buffer);
+    publish(configTopic, buffer);
+    
+    // finish
+    
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
         auto inv = Hoymiles.getInverterByPos(i);
@@ -131,13 +150,7 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         }
 
         JsonObject deviceObj = root.createNestedObject("dev");
-        deviceObj["name"] = "CH" + chanNum;
-        deviceObj["ids"] = inv->serialString() + "_ch" + chanNum;
-        deviceObj["cu"] = String("http://") + NetworkSettings.localIP().toString();
-        deviceObj["mf"] = "";
-        deviceObj["mdl"] = "";
-        deviceObj["sw"] = "";
-        deviceObj["via_device"] = inv->serialString();
+        createStringDeviceInfo(deviceObj, inv)
 
         if (Configuration.get().Mqtt_Hass_Expire) {
             root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
@@ -185,7 +198,7 @@ void MqttHandleHassClass::publishInverterButton(std::shared_ptr<InverterAbstract
     root["payload_press"] = payload;
 
     JsonObject deviceObj = root.createNestedObject("dev");
-    createDeviceInfo(deviceObj, inv);
+    createInverterDeviceInfo(deviceObj, inv);
 
     String buffer;
     serializeJson(root, buffer);
@@ -224,7 +237,7 @@ void MqttHandleHassClass::publishInverterNumber(
     root["max"] = max;
 
     JsonObject deviceObj = root.createNestedObject("dev");
-    createDeviceInfo(deviceObj, inv);
+    createInverterDeviceInfo(deviceObj, inv);
 
     String buffer;
     serializeJson(root, buffer);
@@ -253,21 +266,40 @@ void MqttHandleHassClass::publishInverterBinarySensor(std::shared_ptr<InverterAb
     root["pl_off"] = payload_off;
 
     JsonObject deviceObj = root.createNestedObject("dev");
-    createDeviceInfo(deviceObj, inv);
+    createInverterDeviceInfo(deviceObj, inv);
 
     String buffer;
     serializeJson(root, buffer);
     publish(configTopic, buffer);
 }
 
-void MqttHandleHassClass::createDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv)
+void MqttHandleHassClass::createDTUDeviceInfo(JsonObject& object)
+{
+    object["name"] = NetworkSettings.getHostname();
+    object["ids"] = NetworkSettings.getHostname();
+    object["cu"] = String("http://") + NetworkSettings.localIP().toString();
+    object["mf"] = "OpenDTU";
+    object["mdl"] = "OpenDTU"; // ESP model?
+    object["sw"] = AUTO_GIT_HASH;
+}
+
+void MqttHandleHassClass::createInverterDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv)
 {
     object["name"] = inv->name();
     object["ids"] = inv->serialString();
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
-    object["mf"] = "OpenDTU";
-    object["mdl"] = inv->typeName();
-    object["sw"] = AUTO_GIT_HASH;
+    object["mf"] = "";
+    object["mdl"] = inv->DevInfo()->getHwModelName();
+    object["sw"] = inv->DevInfo()->getFwBuildVersion();
+    object["via_device"] = "dtu";
+}
+
+void MqttHandleHassClass::createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv)
+{
+    object["name"] = "CH" + chanNum; 
+    object["ids"] = inv->serialString() + "_ch" + chanNum;
+    object["cu"] = String("http://") + NetworkSettings.localIP().toString();
+    object["via_device"] = inv->serialString();
 }
 
 void MqttHandleHassClass::publish(const String& subtopic, const String& payload)
