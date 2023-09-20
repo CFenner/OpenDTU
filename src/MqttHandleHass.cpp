@@ -48,9 +48,10 @@ void MqttHandleHassClass::publishConfig()
     const CONFIG_T& config = Configuration.get();
 
     // publish DTU sensors
-    publishDTUSensor("IP", "mdi:network-outline", "diagnostics", "", "");
-    publishDTUSensor("WiFi Signal", "mdi:wifi", "diagnostics", "dBm", "rssi");
-    publishDTUSensor("Uptime", "mdi:clock-time-eight-outline", "diagnostics", "s", "");
+    publishDTUSensor("IP", "mdi:network-outline", "diagnostic", "", "");
+    publishDTUSensor("WiFi Signal", "mdi:wifi", "diagnostic", "dBm", "rssi");
+    publishDTUSensor("Uptime", "mdi:clock-time-eight-outline", "diagnostic", "s", "");
+    //publishDTUBinarySensor("Status", "", "diagnostics", "", "");
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
