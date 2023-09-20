@@ -58,7 +58,7 @@ void MqttHandleHassClass::publishConfig()
     root["uniq_id"] = NetworkSettings.getHostname() + "_ip";
 
     JsonObject deviceObj = root.createNestedObject("dev");
-    createDTUDeviceInfo(deviceObj)
+    createDTUDeviceInfo(deviceObj);
 
     String buffer;
     serializeJson(root, buffer);
