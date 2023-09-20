@@ -91,14 +91,14 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* icon, c
     String id = name;
     id.toLowerCase();
     id.replace(" ", "_");
+    String topic = subTopic;
+    if (topic == "") {
+        topic = id;
+    }
 
     DynamicJsonDocument root(1024);
     root["name"] = name;
-    if (strcmp(subTopic, "")) {
-        root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + id;
-    } else {
-        root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + subTopic;
-    }
+    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + id;
     root["ic"] = icon;
     root["ent_cat"] = category;
