@@ -63,7 +63,7 @@ private:
     void publishInverterBinarySensor(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* subTopic, const char* payload_on, const char* payload_off);
     void createDTUDeviceInfo(JsonObject& object);
     void createInverterDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv);
-    void createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv);
+    void createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv, String channel);
 
     bool _wasConnected = false;
     bool _updateForced = false;
