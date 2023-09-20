@@ -139,7 +139,8 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
     if (strcmp(category, "")) {
         root["ent_cat"] = category;
     }
-    root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
+    //root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
+    root["availability_topic"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     
     JsonObject deviceObj = root.createNestedObject("dev");
     createDTUDeviceInfo(deviceObj);
