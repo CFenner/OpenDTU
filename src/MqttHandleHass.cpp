@@ -344,8 +344,8 @@ void MqttHandleHassClass::createInverterDeviceInfo(JsonObject& object, std::shar
     object["ids"] = inv->serialString();
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
     //object["mf"] = "";
-    object["mdl"] = inv->DevInfo()->getHwModelName(); // not available ?!
-    object["sw"] = inv->DevInfo()->getFwBuildVersion();
+    object["mdl"] = inv->typeName(); //TODO: find out why inv->DevInfo()->getHwModelName() is not available yet
+    //TODO: same as aboveobject["sw"] = inv->DevInfo()->getFwBuildVersion();
     object["via_device"] = NetworkSettings.getHostname();
 }
 
