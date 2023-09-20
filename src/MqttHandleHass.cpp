@@ -48,10 +48,10 @@ void MqttHandleHassClass::publishConfig()
     const CONFIG_T& config = Configuration.get();
 
     // publish DTU sensors
-    publishDTUSensor("IP", "", "", "", "", "");//"diagnostic", "mdi:network-outline", "", "");
-    publishDTUSensor("WiFi Signal", "signal_strength", "", "", "", "rssi");//"diagnostic", "", "dBm", "rssi");
-    publishDTUSensor("Uptime", "duration", "", "", "", "");//"diagnostic", "mdi:clock-time-eight-outline", "s", "");
-    publishDTUBinarySensor("Status", "connectivity");
+    publishDTUSensor("IP", "", "diagnostic", "mdi:network-outline", "", "");//"diagnostic", "mdi:network-outline", "", "");
+    publishDTUSensor("WiFi Signal", "signal_strength", "diagnostic", "", "dBm", "rssi");//"diagnostic", "", "dBm", "rssi");
+    publishDTUSensor("Uptime", "duration", "diagnostic", "", "s", "");//"diagnostic", "mdi:clock-time-eight-outline", "s", "");
+    publishDTUBinarySensor("Status", "connectivity", "diagnostic");
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
@@ -100,10 +100,18 @@ void MqttHandleHassClass::publishDTUSensor(const char* name, const char* device_
     DynamicJsonDocument root(1024);
     root["name"] = name;
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + id;
-    root["dev_cla"] = device_class;
-    //root["ic"] = icon;
-    //root["ent_cat"] = category;
-    //root["unit_of_meas"] = unit_of_measure;
+    if (strcmp(device_class, "")) {
+        root["dev_cla"] = device_class;
+    }
+    if (strcmp(icon, "")) {
+        root["ic"] = icon;
+    }
+    if (strcmp(category, "")) {
+        root["ent_cat"] = category;
+    }
+    if (strcmp(unit_of_measure, "")) {
+        root["unit_of_meas"] = unit_of_measure;
+    }
     root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     
     JsonObject deviceObj = root.createNestedObject("dev");
@@ -125,7 +133,9 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
     DynamicJsonDocument root(1024);
     root["name"] = name;
     root["uniq_id"] = NetworkSettings.getHostname() + "_" + sensorId;
-    root["dev_cla"] = device_class;
+    if (strcmp(device_class, "")) {
+        root["dev_cla"] = device_class;
+    }
     root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
     
     JsonObject deviceObj = root.createNestedObject("dev");
