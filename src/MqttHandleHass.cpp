@@ -140,12 +140,8 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
         root["ent_cat"] = category;
     }
     root["stat_t"] = MqttSettings.getPrefix() + "dtu" + "/" + topic;
-    if (strcmp(payload_on, "")) {
-        root["payload_on"] = payload_on;
-    }
-    if (strcmp(payload_off, "")) {
-        root["payload_off"] = payload_off;
-    }
+    root["pl_on"] = payload_on;
+    root["pl_off"] = payload_off;
     
     JsonObject deviceObj = root.createNestedObject("dev");
     createDTUDeviceInfo(deviceObj);
