@@ -150,7 +150,7 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         }
 
         JsonObject deviceObj = root.createNestedObject("dev");
-        if (type != TYPE_DC) {
+        if (type == TYPE_DC) {
             createStringDeviceInfo(deviceObj, inv, chanNum);
         } else {
             createInverterDeviceInfo(deviceObj, inv);
@@ -292,16 +292,16 @@ void MqttHandleHassClass::createInverterDeviceInfo(JsonObject& object, std::shar
     object["name"] = inv->name();
     object["ids"] = inv->serialString();
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
-    object["mf"] = "";
-    object["mdl"] = inv->DevInfo()->getHwModelName();
+    //object["mf"] = "";
+    object["mdl"] = inv->DevInfo()->getHwModelName(); // not available ?!
     object["sw"] = inv->DevInfo()->getFwBuildVersion();
-    object["via_device"] = "dtu";
+    object["via_device"] = NetworkSettings.getHostname();
 }
 
-void MqttHandleHassClass::createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv, String channel)
+void MqttHandleHassClass::createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv, String string)
 {
-    object["name"] = "CH" + channel; 
-    object["ids"] = inv->serialString() + "_ch" + channel;
+    object["name"] = "String " + string; // use name from config (/serial/1/name)?
+    object["ids"] = inv->serialString() + "_string_" + string;
     object["cu"] = String("http://") + NetworkSettings.localIP().toString();
     object["via_device"] = inv->serialString();
 }
