@@ -51,7 +51,7 @@ void MqttHandleHassClass::publishConfig()
     publishDTUSensor("IP", "", "", "", "", "");//"diagnostic", "mdi:network-outline", "", "");
     publishDTUSensor("WiFi Signal", "signal_strength", "", "", "", "rssi");//"diagnostic", "", "dBm", "rssi");
     publishDTUSensor("Uptime", "duration", "", "", "", "");//"diagnostic", "mdi:clock-time-eight-outline", "s", "");
-    publishDTUBinarySensor("Status", "connectivity", "", "");
+    publishDTUBinarySensor("Status", "connectivity");
     
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
@@ -119,7 +119,7 @@ void MqttHandleHassClass::publishDTUBinarySensor(const char* name, const char* d
     String sensorId = name;
     sensorId.toLowerCase();
     sensorId.replace(" ", "_");
-    String topic = sensorId
+    String topic = sensorId;
 
     DynamicJsonDocument root(1024);
     root["name"] = name;
