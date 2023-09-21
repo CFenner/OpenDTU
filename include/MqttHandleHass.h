@@ -31,7 +31,7 @@ enum {
     ENTITY_CATEGORY_CONFIG,
     ENTITY_CATEGORY_DIAGNOSTIC
 };
-const char* const ENTITY_CATEGORIES[] = { 0, "config", "diagnostic" };
+const char* const entityCategories[] = { 0, "config", "diagnostic" };
 
 typedef struct {
     FieldId_t fieldId; // field id
