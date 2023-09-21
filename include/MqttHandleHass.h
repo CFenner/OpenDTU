@@ -62,7 +62,7 @@ private:
     void publishField(std::shared_ptr<InverterAbstract> inv, ChannelType_t type, ChannelNum_t channel, byteAssign_fieldDeviceClass_t fieldType, bool clear = false);
     void publishInverterButton(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* icon, const char* category, const char* deviceClass, const char* subTopic, const char* payload);
     void publishInverterNumber(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* icon, const char* category, const char* commandTopic, const char* stateTopic, const char* unitOfMeasure, int16_t min = 1, int16_t max = 100);
-    void publishInverterBinarySensor(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* subTopic, const char* payload_on, const char* payload_off);
+    void publishInverterBinarySensor(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* device_class, const char* category, const char* subTopic, const char* payload_on, const char* payload_off);
     void createDTUDeviceInfo(JsonObject& object);
     void createInverterDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv);
     void createStringDeviceInfo(JsonObject& object, std::shared_ptr<InverterAbstract> inv, String channel);
