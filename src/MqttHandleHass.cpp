@@ -185,12 +185,7 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         const char* devCls = deviceClasses[fieldType.deviceClsId];
         const char* stateCls = stateClasses[fieldType.stateClsId];
 
-        String name;
-        if (type != TYPE_DC) {
-            name = String(inv->name()) + " " + fieldName;
-        } else {
-            name = String(inv->name()) + " CH" + chanNum + " " + fieldName;
-        }
+        String name = String(inv->name()) + " " + fieldName;
 
         DynamicJsonDocument root(1024);
         root["name"] = name;
@@ -203,10 +198,10 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         }
 
         JsonObject deviceObj = root.createNestedObject("dev");
-        if (type == TYPE_DC) {
-            createStringDeviceInfo(deviceObj, inv, chanNum);
-        } else {
+        if (type != TYPE_DC) {
             createInverterDeviceInfo(deviceObj, inv);
+        } else {
+            createStringDeviceInfo(deviceObj, inv, chanNum);
         }
 
         if (Configuration.get().Mqtt_Hass_Expire) {
