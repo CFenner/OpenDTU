@@ -243,6 +243,9 @@ void MqttHandleHassClass::publishInverterButton(std::shared_ptr<InverterAbstract
     if (strcmp(icon, "")) {
         root["ic"] = icon;
     }
+    if (Configuration.get().Mqtt_Hass_Expire) {
+        root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
+    }
     if (strcmp(deviceClass, "")) {
         root["dev_cla"] = deviceClass;
     }
@@ -282,6 +285,9 @@ void MqttHandleHassClass::publishInverterNumber(
     if (strcmp(icon, "")) {
         root["ic"] = icon;
     }
+    if (Configuration.get().Mqtt_Hass_Expire) {
+        root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
+    }
     root["ent_cat"] = category;
     root["cmd_t"] = cmdTopic;
     root["stat_t"] = statTopic;
@@ -314,6 +320,9 @@ void MqttHandleHassClass::publishInverterBinarySensor(std::shared_ptr<InverterAb
     DynamicJsonDocument root(1024);
     root["name"] = String(inv->name()) + " " + caption;
     root["uniq_id"] = serial + "_" + sensorId;
+    if (Configuration.get().Mqtt_Hass_Expire) {
+        root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
+    }
     if (strcmp(device_class, "")) {
         root["dev_cla"] = device_class;
     }
