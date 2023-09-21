@@ -48,7 +48,7 @@ void MqttHandleHassClass::publishConfig()
     const CONFIG_T& config = Configuration.get();
 
     // publish DTU sensors
-    publishDTUSensor("IP", "", entityCategories[ENTITY_CATEGORY_DIAGNOSTIC], "mdi:network-outline", "", "");
+    publishDTUSensor("IP", deviceClasses[DEVICE_CLS_NONE], entityCategories[ENTITY_CATEGORY_DIAGNOSTIC], "mdi:network-outline", "", "");
     publishDTUSensor("WiFi Signal", deviceClasses[DEVICE_CLS_SIGNAL_STRENGTH], entityCategories[ENTITY_CATEGORY_DIAGNOSTIC], "", "dBm", "rssi");
     publishDTUSensor("Uptime", deviceClasses[DEVICE_CLS_DURATION], entityCategories[ENTITY_CATEGORY_DIAGNOSTIC], "", "s", "");
     publishDTUBinarySensor("Status", deviceClasses[DEVICE_CLS_CONNECTIVITY], entityCategories[ENTITY_CATEGORY_DIAGNOSTIC], "online", "offline");
