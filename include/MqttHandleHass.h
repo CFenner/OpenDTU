@@ -14,24 +14,15 @@ enum {
     DEVICE_CLS_FREQ,
     DEVICE_CLS_TEMP,
     DEVICE_CLS_POWER_FACTOR,
-    DEVICE_CLS_REACTIVE_POWER,
-    DEVICE_CLS_SIGNAL_STRENGTH,
-    DEVICE_CLS_DURATION,
-    DEVICE_CLS_CONNECTIVITY
+    DEVICE_CLS_REACTIVE_POWER
 };
-const char* const deviceClasses[] = { 0, "current", "energy", "power", "voltage", "frequency", "temperature", "power_factor", "reactive_power", "signal_strength", "duration", "connectivity" };
+const char* const deviceClasses[] = { 0, "current", "energy", "power", "voltage", "frequency", "temperature", "power_factor", "reactive_power" };
 enum {
     STATE_CLS_NONE = 0,
     STATE_CLS_MEASUREMENT,
     STATE_CLS_TOTAL_INCREASING
 };
 const char* const stateClasses[] = { 0, "measurement", "total_increasing" };
-enum {
-    ENTITY_CATEGORY_NONE = 0,
-    ENTITY_CATEGORY_CONFIG,
-    ENTITY_CATEGORY_DIAGNOSTIC
-};
-const char* const entityCategories[] = { 0, "config", "diagnostic" };
 
 typedef struct {
     FieldId_t fieldId; // field id
