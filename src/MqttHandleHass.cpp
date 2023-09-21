@@ -264,7 +264,7 @@ void MqttHandleHassClass::publishInverterButton(std::shared_ptr<InverterAbstract
 void MqttHandleHassClass::publishInverterNumber(
     std::shared_ptr<InverterAbstract> inv, const char* caption, const char* icon, const char* category,
     const char* commandTopic, const char* stateTopic, const char* unitOfMeasure,
-    int16_t min, int16_t max)
+    int16_t min, int16_t max_value)
 {
     String serial = inv->serialString();
 
@@ -293,7 +293,7 @@ void MqttHandleHassClass::publishInverterNumber(
     root["stat_t"] = statTopic;
     root["unit_of_meas"] = unitOfMeasure;
     root["min"] = min;
-    root["max"] = max;
+    root["max"] = max_value;
 
     JsonObject deviceObj = root.createNestedObject("dev");
     createInverterDeviceInfo(deviceObj, inv);
